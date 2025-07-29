@@ -191,7 +191,7 @@ CREATE TABLE Actividades (
 ```typescript
 export const SUPABASE_URL = 'https://faollalzdyoigzfzggwy.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-export const GROQ_API_KEY = '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';
+export const GROQ_API_KEY = ''; // Configurar en variables de entorno
 ```
 
 ### Características de Seguridad
@@ -199,6 +199,8 @@ export const GROQ_API_KEY = 'gsk_ivGtwAevc9LxMnKEHkOlWGdyb3FYDq9mUjLOShPFWKmxcoW
 - **Autorización**: Row Level Security (RLS) en PostgreSQL
 - **Validación**: Validación de datos en frontend y backend
 - **Logging**: Registro de todas las operaciones para auditoría
+- **Variables de Entorno**: Configuración segura de claves API
+- **Gitignore**: Protección de archivos sensibles en el repositorio
 
 ## 🚀 Instalación y Configuración
 
@@ -223,9 +225,10 @@ export const GROQ_API_KEY = 'gsk_ivGtwAevc9LxMnKEHkOlWGdyb3FYDq9mUjLOShPFWKmxcoW
    ```
 
 3. **Configurar variables de entorno**
-   - Crear archivo `.env` basado en `config.ts`
+   - Ver el archivo `SETUP.md` para instrucciones detalladas
+   - Crear archivo `.env` con las variables necesarias
    - Configurar `SUPABASE_URL` y `SUPABASE_ANON_KEY`
-   - Configurar `GROQ_API_KEY` para el chatbot
+   - Configurar `GROQ_API_KEY` para el chatbot (opcional)
 
 4. **Configurar el backend**
    ```bash
