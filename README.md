@@ -191,8 +191,10 @@ CREATE TABLE Actividades (
 ```typescript
 export const SUPABASE_URL = 'https://faollalzdyoigzfzggwy.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-export const GROQ_API_KEY = ''; // Configurar en variables de entorno
+export const GROQ_API_KEY = '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';
 ```
+
+**Nota**: Las claves están configuradas para desarrollo. Para producción, usa variables de entorno.
 
 ### Características de Seguridad
 - **Autenticación**: Supabase Auth con persistencia en AsyncStorage
