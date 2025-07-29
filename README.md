@@ -6,26 +6,81 @@
 
 ## 🏗️ Arquitectura del Sistema
 
-### Frontend (Aplicación Móvil)
-- **Framework**: React Native con Expo
-- **Navegación**: React Navigation v7
-- **Estado**: React Hooks y Context API
-- **UI/UX**: Componentes nativos con tema personalizado púrpura
-- **Iconografía**: Expo Vector Icons (Ionicons)
-- **Notificaciones**: Sonner Native para toast notifications
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              ARQUITECTURA EDUSYNC                               │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-### Backend
-- **Framework**: Spring Boot 3.3.0
-- **Lenguaje**: Java 17
-- **Arquitectura**: REST API con controladores
-- **Base de Datos**: PostgreSQL (a través de Supabase)
-- **Dependencias**: Spring Web, Spring JDBC, PostgreSQL Driver
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   FRONTEND      │    │   BACKEND       │    │   BASE DE       │    │   CHATBOT       │
+│   (React Native)│    │   (Spring Boot) │    │   DATOS         │    │   (Groq API)    │
+│                 │    │                 │    │   (Supabase)    │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │   Expo      │ │    │ │ Java 17     │ │    │ │ PostgreSQL  │ │    │ │ Llama 3.1   │ │
+│ │   CLI       │ │    │ │ Spring Boot │ │    │ │ 14.0        │ │    │ │ 8B Model    │ │
+│ │   SDK       │ │    │ │ 3.3.0       │ │    │ │             │ │    │ │             │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+│                 │    │                 │    │                 │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ React       │ │    │ │ REST API    │ │    │ │ Row Level   │ │    │ │ API REST    │ │
+│ │ Navigation  │ │    │ │ Controllers │ │    │ │ Security    │ │    │ │ Endpoints   │ │
+│ │ v7          │ │    │ │ JDBC        │ │    │ │ (RLS)       │ │    │ │             │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+│                 │    │                 │    │                 │    │                 │
+│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
+│ │ TypeScript  │ │    │ │ Maven       │ │    │ │ Real-time   │ │    │ │ Rate        │ │
+│ │ Hooks       │ │    │ │ Build Tool  │ │    │ │ Subscriptions│ │    │ │ Limiting    │ │
+│ │ Context API │ │    │ │             │ │    │ │             │ │    │ │             │ │
+│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         │                       │                       │                       │
+         └───────────────────────┼───────────────────────┼───────────────────────┘
+                                 │                       │
+                    ┌─────────────────────────────────────────────────────────────┐
+                    │                    FLUJO DE DATOS                          │
+                    └─────────────────────────────────────────────────────────────┘
+                    
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Usuario       │    │   Frontend      │    │   Backend       │    │   Base de       │
+│   Interactúa    │───▶│   Procesa       │───▶│   Valida        │───▶│   Datos         │
+│   con la App    │    │   Datos         │    │   y Ejecuta     │    │   Almacena      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         ▲                       │                       │                       │
+         │                       │                       │                       │
+         └───────────────────────┼───────────────────────┼───────────────────────┘
+                                 │                       │
+                    ┌─────────────────────────────────────────────────────────────┐
+                    │                 RESPUESTA Y ACTUALIZACIÓN                   │
+                    └─────────────────────────────────────────────────────────────┘
+```
 
-### Base de Datos
-- **Proveedor**: Supabase (PostgreSQL en la nube)
-- **Autenticación**: Supabase Auth con AsyncStorage
-- **Operaciones**: CRUD completo con operaciones personalizadas
-- **Seguridad**: Row Level Security (RLS) habilitado
+### **Frontend (Aplicación Móvil)**
+- **Framework**: React Native con Expo SDK 52
+- **Navegación**: React Navigation v7 con Stack y Tab Navigation
+- **Estado**: React Hooks (useState, useEffect, useCallback) y Context API
+- **UI/UX**: Componentes nativos con tema personalizado púrpura (#9C27B0)
+- **Iconografía**: Expo Vector Icons (Ionicons) con 7,000+ iconos
+- **Notificaciones**: Sonner Native para toast notifications con animaciones
+- **Animaciones**: React Native Reanimated v3 para transiciones suaves
+- **Almacenamiento**: AsyncStorage para persistencia local
+
+### **Backend**
+- **Framework**: Spring Boot 3.3.0 con Spring Framework 6
+- **Lenguaje**: Java 17 con características modernas (Records, Pattern Matching)
+- **Arquitectura**: REST API con controladores anotados (@RestController)
+- **Base de Datos**: PostgreSQL 14.0 (a través de Supabase)
+- **Dependencias**: Spring Web, Spring JDBC, PostgreSQL Driver, Lombok
+- **Build Tool**: Maven 3.8+ con plugins optimizados
+- **Logging**: SLF4J con configuración personalizada
+
+### **Base de Datos**
+- **Proveedor**: Supabase (PostgreSQL en la nube con AWS)
+- **Autenticación**: Supabase Auth con JWT tokens y AsyncStorage
+- **Operaciones**: CRUD completo con operaciones personalizadas y optimizadas
+- **Seguridad**: Row Level Security (RLS) habilitado con políticas granulares
+- **Tiempo Real**: Suscripciones WebSocket para actualizaciones en vivo
+- **Backup**: Automático diario con retención de 7 días
 
 ## 📱 Funcionalidades Principales
 
@@ -267,19 +322,107 @@ export const GROQ_API_KEY = ''; // Configurar en variables de entorno
 - **Forms**: Formularios con validación
 - **Charts**: Gráficos para estadísticas
 
-## 🔄 Flujo de Datos
+## 🔄 Flujo de Datos Detallado
 
-### Frontend → Backend
-1. **Operaciones CRUD**: Las operaciones se realizan directamente a Supabase
-2. **Validación**: Validación en frontend antes de enviar datos
-3. **Manejo de Errores**: Toast notifications para errores
-4. **Caché**: AsyncStorage para persistencia de sesión
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              FLUJO DE DATOS COMPLETO                           │
+└─────────────────────────────────────────────────────────────────────────────────┘
 
-### Backend → Base de Datos
-1. **JDBC Template**: Conexión directa a PostgreSQL
-2. **Queries Optimizadas**: Consultas SQL optimizadas
-3. **Transacciones**: Manejo de transacciones para operaciones críticas
-4. **Logging**: Registro de todas las operaciones
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   USUARIO       │    │   FRONTEND      │    │   SUPABASE      │    │   BACKEND       │
+│   INTERFAZ      │    │   REACT NATIVE  │    │   POSTGRESQL    │    │   SPRING BOOT   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         │ 1. Interacción        │                       │                       │
+         │    (Touch, Swipe)     │                       │                       │
+         └──────────────────────▶│                       │                       │
+                                 │                       │                       │
+                                 │ 2. Validación         │                       │
+                                 │    Frontend           │                       │
+                                 │    (TypeScript)       │                       │
+                                 │                       │                       │
+                                 │ 3. Operación CRUD     │                       │
+                                 │    (Supabase Client)  │                       │
+                                 └──────────────────────▶│                       │
+                                                         │                       │
+                                                         │ 4. Procesamiento      │
+                                                         │    SQL + RLS          │
+                                                         │                       │
+                                                         │ 5. Respuesta          │
+                                                         │    (JSON)             │
+                                 └──────────────────────▶│                       │
+                                                         │                       │
+                                                         │ 6. Actualización UI   │
+                                                         │    (React State)      │
+                                 └──────────────────────▶│                       │
+                                                         │                       │
+                                                         │ 7. Notificación       │
+                                                         │    (Toast)            │
+                                 └──────────────────────▶│                       │
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              DETALLE DE OPERACIONES                            │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   CREAR         │    │   LEER          │    │   ACTUALIZAR    │    │   ELIMINAR      │
+│   ESTUDIANTE    │    │   ESTUDIANTES   │    │   ESTUDIANTE    │    │   ESTUDIANTE    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         │ 1. Formulario         │ 1. Pantalla Lista     │ 1. Pantalla Detalle  │ 1. Pantalla Detalle
+         │    Validación         │    Carga inicial      │    Edición           │    Confirmación
+         │                       │                       │                       │
+         │ 2. Supabase Insert    │ 2. Supabase Select    │ 2. Supabase Update   │ 2. Supabase Delete
+         │    .insert()          │    .select()          │    .update()         │    .delete()
+         │                       │                       │                       │
+         │ 3. RLS Policy         │ 3. RLS Policy         │ 3. RLS Policy        │ 3. RLS Policy
+         │    Check              │    Check              │    Check             │    Check
+         │                       │                       │                       │
+         │ 4. PostgreSQL         │ 4. PostgreSQL         │ 4. PostgreSQL        │ 4. PostgreSQL
+         │    INSERT INTO        │    SELECT FROM        │    UPDATE SET        │    DELETE FROM
+         │                       │                       │                       │
+         │ 5. Trigger            │ 5. Result Set         │ 5. Trigger           │ 5. Trigger
+         │    Log Activity       │    JSON Response      │    Log Activity      │    Log Activity
+         │                       │                       │                       │
+         │ 6. Real-time          │ 6. Update UI          │ 6. Real-time         │ 6. Real-time
+         │    Subscription       │    State              │    Subscription      │    Subscription
+         │                       │                       │                       │
+         │ 7. Toast Success      │ 7. Render List        │ 7. Toast Success     │ 7. Toast Success
+         │    Notification       │    Components         │    Notification      │    Notification
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              MANEJO DE ERRORES                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   ERROR         │    │   FRONTEND      │    │   BACKEND       │    │   BASE DE       │
+│   TYPES         │    │   HANDLING      │    │   HANDLING      │    │   DATOS         │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │                       │
+         │ • Network Error       │ • Try-Catch Blocks    │ • Exception Handler  │ • Constraint Error
+         │ • Validation Error    │ • Error Boundaries    │ • Global Exception   │ • Foreign Key Error
+         │ • Authentication      │ • Toast Notifications │ • Logging            │ • Unique Constraint
+         │ • Authorization       │ • Retry Logic         │ • HTTP Status Codes  │ • Check Constraint
+         │ • Database Error      │ • Fallback UI         │ • Error Response     │ • Not Null Error
+         │ • API Rate Limit      │ • Loading States      │ • Circuit Breaker    │ • Data Type Error
+```
+
+### **Frontend → Backend (Directo a Supabase)**
+1. **Operaciones CRUD**: Las operaciones se realizan directamente a Supabase usando el cliente JavaScript
+2. **Validación**: Validación en frontend con TypeScript y validación de esquemas
+3. **Manejo de Errores**: Toast notifications con Sonner Native para errores específicos
+4. **Caché**: AsyncStorage para persistencia de sesión y datos offline
+5. **Optimistic Updates**: Actualizaciones optimistas para mejor UX
+6. **Retry Logic**: Lógica de reintento automático para operaciones fallidas
+
+### **Backend → Base de Datos (JDBC)**
+1. **JDBC Template**: Conexión directa a PostgreSQL usando Spring JDBC
+2. **Queries Optimizadas**: Consultas SQL optimizadas con índices apropiados
+3. **Transacciones**: Manejo de transacciones ACID para operaciones críticas
+4. **Logging**: Registro detallado de todas las operaciones con SLF4J
+5. **Connection Pooling**: Pool de conexiones para mejor rendimiento
+6. **Prepared Statements**: Uso de prepared statements para seguridad
 
 ## 📊 Funcionalidades Avanzadas
 
