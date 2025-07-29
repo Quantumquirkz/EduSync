@@ -6,8 +6,8 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 // API Key for Groq Chatbot
 // IMPORTANTE: Configura tu GROQ_API_KEY en el archivo .env
-// Para desarrollo, puedes usar la clave directamente aquí
-export const GROQ_API_KEY = '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';
+// Para desarrollo, configura la clave en tu archivo .env local
+export const GROQ_API_KEY = '';
 
 // Configuración de conexión directa a la base de datos (referencia; no se usa en la app móvil).
 export const DB_CONFIG = {
