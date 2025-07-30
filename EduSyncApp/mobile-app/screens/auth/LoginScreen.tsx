@@ -1,4 +1,32 @@
+/**
+ * EduSync - Pantalla de Inicio de Sesión (LoginScreen)
+ * 
+ * Esta pantalla permite a los usuarios iniciar sesión en el sistema EduSync
+ * utilizando autenticación de Supabase. Soporta tanto autenticación por
+ * email/password como inicio de sesión con Google OAuth.
+ * 
+ * Funcionalidades:
+ * - Formulario de inicio de sesión con email y contraseña
+ * - Validación de campos obligatorios
+ * - Integración con Supabase Auth
+ * - Inicio de sesión con Google OAuth
+ * - Manejo de estados de carga y errores
+ * - Navegación automática después del login exitoso
+ * 
+ * Características de seguridad:
+ * - Validación de entrada de usuario
+ * - Manejo seguro de credenciales
+ * - Integración con políticas de autenticación de Supabase
+ * - Redirección segura después de autenticación
+ * 
+ * @author EduSync Team
+ * @version 1.0.0
+ */
+
+// Importaciones de React y hooks necesarios
 import React, { useState } from 'react';
+
+// Importaciones de componentes de React Native
 import {
   View,
   Text,
@@ -10,76 +38,118 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
+
+// Importaciones para navegación y área segura
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Importación de iconos
+import { Ionicons } from '@expo/vector-icons';
+
+// Importaciones de utilidades y tipos locales
 import { toast } from 'sonner-native';
 import { RootStackParamList } from '../../App';
 import supabase from '../../supabaseClient';
 
+// Tipo para la navegación de esta pantalla
 type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
+/**
+ * Componente principal de la pantalla de inicio de sesión
+ * 
+ * Este componente maneja la autenticación de usuarios mediante
+ * Supabase Auth, incluyendo validación de formularios y manejo
+ * de errores de autenticación.
+ */
 export default function LoginScreen() {
+  // Hook de navegación para moverse entre pantallas
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  
+  // Estados para manejar el formulario y la interfaz
+  const [email, setEmail] = useState('');           // Email del usuario
+  const [password, setPassword] = useState('');     // Contraseña del usuario
+  const [loading, setLoading] = useState(false);    // Estado de carga durante autenticación
+  const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
 
+  /**
+   * Maneja el proceso de inicio de sesión con email y contraseña
+   * 
+   * Valida los campos del formulario y utiliza Supabase Auth
+   * para autenticar al usuario. Maneja diferentes escenarios
+   * como confirmación de email pendiente.
+   */
   const handleLogin = async () => {
+    // Validación de campos obligatorios
     if (!email || !password) {
       toast.error('Por favor completa todos los campos');
       return;
     }
 
-    setLoading(true);
+    setLoading(true); // Activar estado de carga
     try {
+      // Intentar autenticación con Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        email: email.trim(), // Eliminar espacios en blanco
         password,
       });
 
       if (error) {
+        // Mostrar error de autenticación
         toast.error(error.message);
       } else if (data && 'session' in data && data.session) {
+        // Autenticación exitosa con sesión válida
         toast.success('¡Bienvenido de vuelta!');
-        // Navigate to Home immediately
+        // Navegar a la pantalla principal y resetear el stack de navegación
         navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
       } else {
-        // Session not available, likely confirmation pending
+        // Sesión no disponible, probablemente confirmación pendiente
         toast('Inicia sesión completada. Si no ves la pantalla principal, revisa tu correo para confirmar la cuenta');
       }
     } catch (error) {
+      // Error de conexión o inesperado
       toast.error('Error de conexión');
     } finally {
-      setLoading(false);
+      setLoading(false); // Desactivar estado de carga
     }
   };
 
+  /**
+   * Maneja el inicio de sesión con Google OAuth
+   * 
+   * Utiliza Supabase Auth para iniciar el flujo de autenticación
+   * con Google. En caso de éxito, Supabase manejará la redirección.
+   */
   const handleGoogleSignIn = async () => {
-    setLoading(true);
+    setLoading(true); // Activar estado de carga
     try {
+      // Iniciar autenticación OAuth con Google
       const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
       if (error) {
+        // Mostrar error de autenticación con Google
         toast.error(error.message);
         setLoading(false);
       }
-      // On success, Supabase will redirect to Google sign-in
+      // En caso de éxito, Supabase redirigirá a Google para autenticación
     } catch (err) {
+      // Error inesperado durante autenticación con Google
       toast.error('Error al iniciar con Google');
       setLoading(false);
     }
   };
 
+  /**
+   * Renderizado de la interfaz de usuario
+   */
   return (
     <SafeAreaView style={styles.container}>
+      {/* Configuración para evitar que el teclado cubra los campos */}
       <KeyboardAvoidingView 
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <View style={styles.content}>
-          {/* Logo/Header */}
+          {/* Sección del logo y encabezado */}
           <View style={styles.header}>
             <Image
               source={{ uri: 'https://api.a0.dev/assets/image?text=graduation%20cap%20icon%20purple%20modern&aspect=1:1' }}
@@ -91,8 +161,9 @@ export default function LoginScreen() {
             <Text style={styles.description}>Inicia sesión para continuar</Text>
           </View>
 
-          {/* Form */}
+          {/* Sección del formulario de autenticación */}
           <View style={styles.form}>
+            {/* Campo de email */}
             <View style={styles.inputContainer}>
               <Ionicons name="mail-outline" size={20} color="#9C27B0" style={styles.inputIcon} />
               <TextInput
@@ -107,6 +178,7 @@ export default function LoginScreen() {
               />
             </View>
 
+            {/* Campo de contraseña */}
             <View style={styles.inputContainer}>
               <Ionicons name="lock-closed-outline" size={20} color="#9C27B0" style={styles.inputIcon} />
               <TextInput
@@ -118,6 +190,7 @@ export default function LoginScreen() {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
+              {/* Botón para mostrar/ocultar contraseña */}
               <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
@@ -130,6 +203,7 @@ export default function LoginScreen() {
               </TouchableOpacity>
             </View>
 
+            {/* Botón de inicio de sesión */}
             <TouchableOpacity
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={handleLogin}
@@ -142,6 +216,7 @@ export default function LoginScreen() {
               )}
             </TouchableOpacity>
 
+            {/* Enlace para recuperar contraseña (próximamente) */}
             <TouchableOpacity
               style={styles.forgotPassword}
               onPress={() => toast('Funcionalidad próximamente')}
@@ -149,6 +224,7 @@ export default function LoginScreen() {
               <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
             </TouchableOpacity>
 
+            {/* Botón de inicio de sesión con Google */}
             <TouchableOpacity
               style={[styles.googleButton, loading && styles.loginButtonDisabled]}
               onPress={handleGoogleSignIn}
@@ -165,7 +241,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Sign Up Link */}
+          {/* Sección de pie de página */}
           <View style={styles.footer}>
             <Text style={styles.footerText}>¿No tienes una cuenta? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>

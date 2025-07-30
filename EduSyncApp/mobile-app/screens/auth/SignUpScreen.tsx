@@ -1,4 +1,32 @@
+/**
+ * EduSync - Pantalla de Registro de Usuario (SignUpScreen)
+ * 
+ * Esta pantalla permite a los usuarios crear una nueva cuenta en el sistema EduSync
+ * utilizando autenticación de Supabase. Incluye validación de formularios,
+ * confirmación de contraseñas y registro con Google OAuth.
+ * 
+ * Funcionalidades:
+ * - Formulario de registro con validación completa
+ * - Validación de contraseñas (coincidencia y longitud mínima)
+ * - Integración con Supabase Auth para registro
+ * - Registro con Google OAuth
+ * - Confirmación de email automática
+ * - Navegación automática después del registro exitoso
+ * 
+ * Características de seguridad:
+ * - Validación de entrada de usuario
+ * - Verificación de contraseñas
+ * - Integración con políticas de autenticación de Supabase
+ * - Manejo seguro de datos de usuario
+ * 
+ * @author EduSync Team
+ * @version 1.0.0
+ */
+
+// Importaciones de React y hooks necesarios
 import React, { useState } from 'react';
+
+// Importaciones de componentes de React Native
 import {
   View,
   Text,
@@ -10,92 +38,150 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+
+// Importaciones para navegación y área segura
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Importación de iconos
+import { Ionicons } from '@expo/vector-icons';
+
+// Importaciones de utilidades y tipos locales
 import { toast } from 'sonner-native';
 import { RootStackParamList } from '../../App';
 import supabase from '../../supabaseClient';
 
+// Tipo para la navegación de esta pantalla
 type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
 
+/**
+ * Componente principal de la pantalla de registro de usuario
+ * 
+ * Este componente maneja el proceso de registro de nuevos usuarios
+ * mediante Supabase Auth, incluyendo validación de formularios,
+ * confirmación de contraseñas y manejo de errores.
+ */
 export default function SignUpScreen() {
+  // Hook de navegación para moverse entre pantallas
   const navigation = useNavigation<SignUpScreenNavigationProp>();
+  
+  // Estado del formulario con todos los campos necesarios
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    fullName: '',        // Nombre completo del usuario
+    email: '',           // Correo electrónico
+    password: '',        // Contraseña
+    confirmPassword: '', // Confirmación de contraseña
   });
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // Estados para manejar la interfaz
+  const [loading, setLoading] = useState(false);                    // Estado de carga durante registro
+  const [showPassword, setShowPassword] = useState(false);          // Mostrar/ocultar contraseña
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Mostrar/ocultar confirmación
 
+  /**
+   * Actualiza un campo específico del formulario
+   * 
+   * @param field - Nombre del campo a actualizar
+   * @param value - Nuevo valor del campo
+   */
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  /**
+   * Valida todos los campos del formulario antes del envío
+   * 
+   * Verifica que todos los campos obligatorios estén completos,
+   * que la contraseña tenga la longitud mínima requerida y
+   * que las contraseñas coincidan.
+   * 
+   * @return boolean - true si el formulario es válido, false en caso contrario
+   */
   const validateForm = () => {
+    // Validar nombre completo
     if (!formData.fullName.trim()) {
       toast.error('El nombre completo es requerido');
       return false;
     }
+    
+    // Validar correo electrónico
     if (!formData.email.trim()) {
       toast.error('El correo electrónico es requerido');
       return false;
     }
+    
+    // Validar longitud mínima de contraseña
     if (formData.password.length < 6) {
       toast.error('La contraseña debe tener al menos 6 caracteres');
       return false;
     }
+    
+    // Validar que las contraseñas coincidan
     if (formData.password !== formData.confirmPassword) {
       toast.error('Las contraseñas no coinciden');
       return false;
     }
+    
     return true;
   };
 
+  /**
+   * Maneja el proceso de registro de usuario
+   * 
+   * Valida el formulario y utiliza Supabase Auth para crear
+   * una nueva cuenta de usuario. Maneja diferentes escenarios
+   * como confirmación de email automática.
+   */
   const handleSignUp = async () => {
+    // Validar formulario antes de proceder
     if (!validateForm()) return;
 
-    setLoading(true);
+    setLoading(true); // Activar estado de carga
     try {
+      // Intentar registro con Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email: formData.email.trim(),
         password: formData.password,
         options: {
           data: {
-            full_name: formData.fullName.trim(),
+            full_name: formData.fullName.trim(), // Metadatos del usuario
           }
         }
       });
 
       if (error) {
+        // Mostrar error de registro
         toast.error(error.message);
       } else {
+        // Registro exitoso
         toast.success('¡Cuenta creada exitosamente!');
-        // If session returned, navigate directly; otherwise attempt sign-in
+        
+        // Si se devuelve una sesión, navegar directamente
         if (data && 'session' in data && data.session) {
           navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         } else {
-          // Attempt to sign in manually
+          // Intentar iniciar sesión manualmente
           const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
             email: formData.email.trim(),
             password: formData.password,
           });
+          
           if (!loginError && loginData && 'session' in loginData && loginData.session) {
+            // Inicio de sesión exitoso, navegar a pantalla principal
             navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
           } else {
+            // Navegar a pantalla de login y solicitar confirmación de email
             navigation.navigate('Login');
             toast('Revisa tu correo para confirmar tu cuenta antes de iniciar sesión');
           }
         }
       }
     } catch (error) {
+      // Error de conexión o inesperado
       toast.error('Error de conexión');
     } finally {
-      setLoading(false);
+      setLoading(false); // Desactivar estado de carga
     }
   };
 

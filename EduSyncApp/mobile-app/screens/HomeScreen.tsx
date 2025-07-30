@@ -1,4 +1,27 @@
+/**
+ * EduSync - Pantalla Principal (HomeScreen)
+ * 
+ * Esta pantalla es el dashboard principal de la aplicación EduSync.
+ * Muestra un resumen general del sistema de gestión estudiantil con:
+ * - Estadísticas de estudiantes y cursos
+ * - Acciones rápidas para funciones principales
+ * - Actividad reciente del sistema
+ * - Navegación a otras pantallas
+ * 
+ * Funcionalidades:
+ * - Carga y visualización de datos de estudiantes
+ * - Actualización manual (pull-to-refresh)
+ * - Navegación a otras pantallas
+ * - Manejo de estados de carga y error
+ * 
+ * @author EduSync Team
+ * @version 1.0.0
+ */
+
+// Importaciones de React y hooks necesarios
 import React, { useEffect, useState, useCallback } from "react";
+
+// Importaciones de componentes de React Native
 import {
   View,
   Text,
@@ -8,85 +31,138 @@ import {
   RefreshControl,
   ScrollView,
 } from "react-native";
+
+// Importaciones para navegación y área segura
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+// Importación de iconos
 import { Ionicons } from "@expo/vector-icons";
+
+// Importación para notificaciones toast
 import { toast } from "sonner-native";
+
+// Importaciones de tipos y utilidades locales
 import { RootStackParamList } from "../App";
 import supabase from '../supabaseClient';
 import { activityOperations, Activity } from '../utils/activity';
 
+/**
+ * Interfaz que define la estructura de un estudiante
+ * 
+ * Esta interfaz se utiliza para tipar los datos de estudiantes
+ * que se obtienen de la base de datos Supabase.
+ */
 interface Student {
-  nombre: string;
-  apellido: string;
-  cedula: string;
-  edad: number;
-  fecha_de_nacimiento: string;
-  genero: string;
-  herramienta_tecnica: string;
-  pais_de_origen: string;
-  colegio_de_origen: string;
-  codigo_de_grupo: string;
-  universidad: string;
-  facultad: string;
-  materia_favorita: string;
-  horario: string;
-  año_carrera: string;
+  nombre: string;                 // Nombre del estudiante
+  apellido: string;               // Apellido del estudiante
+  cedula: string;                 // Número de cédula (identificador único)
+  edad: number;                   // Edad del estudiante
+  fecha_de_nacimiento: string;    // Fecha de nacimiento
+  genero: string;                 // Género del estudiante
+  herramienta_tecnica: string;    // Herramienta técnica preferida
+  pais_de_origen: string;         // País de origen
+  colegio_de_origen: string;      // Colegio de procedencia
+  codigo_de_grupo: string;        // Código del grupo académico
+  universidad: string;            // Universidad donde estudia
+  facultad: string;               // Facultad de la universidad
+  materia_favorita: string;       // Materia favorita
+  horario: string;                // Horario de clases
+  año_carrera: string;            // Año de la carrera
 }
 
+// Tipo para la navegación de esta pantalla
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
+/**
+ * Componente principal de la pantalla de inicio
+ * 
+ * Este componente renderiza el dashboard principal con estadísticas,
+ * acciones rápidas y actividad reciente del sistema.
+ */
 export default function HomeScreen() {
+  // Hook de navegación para moverse entre pantallas
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [students, setStudents] = useState<Student[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [activities, setActivities] = useState<Activity[]>([]);
+  
+  // Estados para manejar los datos y la interfaz
+  const [students, setStudents] = useState<Student[]>([]);        // Lista de estudiantes
+  const [loading, setLoading] = useState(true);                   // Estado de carga inicial
+  const [refreshing, setRefreshing] = useState(false);            // Estado de actualización manual
+  const [error, setError] = useState<string | null>(null);        // Mensaje de error
+  const [activities, setActivities] = useState<Activity[]>([]);   // Actividades recientes
 
+  /**
+   * Función para obtener estudiantes desde Supabase
+   * 
+   * Esta función se ejecuta al cargar la pantalla y cuando
+   * el usuario hace pull-to-refresh para actualizar los datos.
+   */
   const fetchStudents = useCallback(async () => {
     try {
-      setError(null);
-      // Fetch from Supabase
+      setError(null); // Limpiar errores previos
+      
+      // Consultar todos los estudiantes desde Supabase
       const { data, error: supaError } = await supabase
         .from<Student>('Estudiantes')
         .select('*');
+      
+      // Manejar errores de Supabase
       if (supaError) throw supaError;
+      
+      // Actualizar estado con los datos obtenidos
       setStudents(data ?? []);
     } catch (error) {
       console.error("Error al obtener estudiantes", error);
       setError("No se pudieron cargar los datos.");
       toast.error("Error al cargar datos");
-      // No fallback: mostrar lista vacía
+      // En caso de error, mostrar lista vacía
       setStudents([]);
     } finally {
+      // Finalizar estados de carga
       setLoading(false);
       setRefreshing(false);
     }
   }, []);
 
+  /**
+   * Efecto que se ejecuta al montar el componente
+   * Carga los estudiantes y las actividades recientes
+   */
   useEffect(() => {
-    fetchStudents();
-    activityOperations.fetchRecent().then(setActivities);
+    fetchStudents(); // Cargar estudiantes
+    activityOperations.fetchRecent().then(setActivities); // Cargar actividades recientes
   }, [fetchStudents]);
 
+  /**
+   * Función para manejar la actualización manual (pull-to-refresh)
+   * 
+   * Se ejecuta cuando el usuario desliza hacia abajo para actualizar
+   */
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchStudents();
+    setRefreshing(true); // Activar estado de actualización
+    fetchStudents(); // Recargar datos
   }, [fetchStudents]);
 
+  /**
+   * Renderiza el encabezado de la pantalla
+   * 
+   * Incluye el título del sistema y botones de navegación
+   * para perfil y presentación.
+   */
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.headerTop}>
         <Text style={styles.headerTitle}>Sistema de Gestión Estudiantil</Text>
         <View style={styles.headerButtons}>
+          {/* Botón para navegar al perfil */}
           <TouchableOpacity 
             style={styles.headerButton}
             onPress={() => navigation.navigate('Profile')}
           >
             <Ionicons name="person-circle-outline" size={24} color="#fff" />
           </TouchableOpacity>
+          {/* Botón para navegar a la presentación */}
           <TouchableOpacity 
             style={styles.presentationButton}
             onPress={() => navigation.navigate('Presentation')}
@@ -98,12 +174,22 @@ export default function HomeScreen() {
     </View>
   );
 
-  const totalStudents = students.length;
-  const totalCourses = [...new Set(students.map(s => s.facultad))].length;
-  const attendance = '95%'; // reemplazar con dato real cuando esté disponible
+  // Cálculo de estadísticas para las tarjetas de resumen
+  const totalStudents = students.length; // Total de estudiantes
+  const totalCourses = [...new Set(students.map(s => s.facultad))].length; // Total de facultades únicas
+  const attendance = '95%'; // Porcentaje de asistencia (placeholder)
 
+  /**
+   * Renderiza las tarjetas de resumen con estadísticas
+   * 
+   * Muestra información clave del sistema:
+   * - Número total de estudiantes
+   * - Número de cursos/facultades
+   * - Acceso al asistente AI
+   */
   const renderSummaryCards = () => (
     <View style={styles.summaryContainer}>
+      {/* Tarjeta de estudiantes */}
       <View style={styles.summaryCard}>
         <Ionicons name="people" size={24} color="#fff" />
         <View style={styles.summaryTextContainer}>
@@ -112,6 +198,7 @@ export default function HomeScreen() {
         </View>
       </View>
       
+      {/* Tarjeta de cursos */}
       <View style={styles.summaryCard}>
         <Ionicons name="book" size={24} color="#fff" />
         <View style={styles.summaryTextContainer}>
@@ -120,6 +207,7 @@ export default function HomeScreen() {
         </View>
       </View>
       
+      {/* Tarjeta del asistente AI */}
       <View style={styles.summaryCard}>
         <Ionicons name="checkmark-circle" size={24} color="#fff" />
         <View style={styles.summaryTextContainer}>
@@ -132,10 +220,17 @@ export default function HomeScreen() {
     </View>
   );
 
+  /**
+   * Renderiza las acciones rápidas disponibles
+   * 
+   * Proporciona acceso directo a funciones principales
+   * como importar datos, exportar reportes, etc.
+   */
   const renderQuickActions = () => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
       <View style={styles.quickActionsGrid}>
+        {/* Botón de importar datos */}
         <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#4CAF50' }]}
           onPress={() => {
@@ -146,6 +241,7 @@ export default function HomeScreen() {
           <Text style={styles.actionButtonText}>Importar Datos</Text>
         </TouchableOpacity>
         
+        {/* Botón de exportar reportes */}
         <TouchableOpacity 
           style={[styles.actionButton, { backgroundColor: '#2196F3' }]}
           onPress={() => navigation.navigate('StudentsList')}

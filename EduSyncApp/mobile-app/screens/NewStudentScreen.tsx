@@ -1,4 +1,25 @@
+/**
+ * EduSync - Pantalla de Crear/Editar Estudiante (NewStudentScreen)
+ * 
+ * Esta pantalla permite crear nuevos estudiantes o editar estudiantes existentes
+ * en el sistema EduSync. Proporciona un formulario completo con validación
+ * y manejo de errores.
+ * 
+ * Funcionalidades:
+ * - Formulario completo para datos de estudiantes
+ * - Validación de campos obligatorios
+ * - Modo de creación y edición
+ * - Integración con Supabase para persistencia
+ * - Registro de actividades del sistema
+ * 
+ * @author EduSync Team
+ * @version 1.0.0
+ */
+
+// Importaciones de React y hooks necesarios
 import React, { useState, useEffect } from 'react';
+
+// Importaciones de componentes de React Native
 import { 
   View, 
   Text, 
@@ -10,33 +31,52 @@ import {
   Platform,
   Alert
 } from 'react-native';
+
+// Importaciones para navegación y área segura
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp, RouteProp } from '@react-navigation/native-stack';
+
+// Importación de iconos
+import { Ionicons } from '@expo/vector-icons';
+
+// Importaciones de tipos y utilidades locales
 import { RootStackParamList } from '../App';
 import { toast } from 'sonner-native';
 import supabase from '../supabaseClient';
 import { activityOperations } from '../utils/activity';
 
+/**
+ * Interfaz que define la estructura del formulario de estudiante
+ * 
+ * Esta interfaz se utiliza para manejar los datos del formulario.
+ * Todos los campos son strings para facilitar el manejo en los inputs,
+ * excepto la edad que se convierte a número al enviar.
+ */
 interface StudentForm {
-  nombre: string;
-  apellido: string;
-  cedula: string;
-  edad: string;
-  fecha_de_nacimiento: string;
-  genero: string;
-  herramienta_tecnica: string;
-  pais_de_origen: string;
-  colegio_de_origen: string;
-  codigo_de_grupo: string;
-  universidad: string;
-  facultad: string;
-  materia_favorita: string;
-  horario: string;
-  año_carrera: string;
+  nombre: string;                 // Nombre del estudiante
+  apellido: string;               // Apellido del estudiante
+  cedula: string;                 // Número de cédula (identificador único)
+  edad: string;                   // Edad como string (se convierte a número)
+  fecha_de_nacimiento: string;    // Fecha de nacimiento
+  genero: string;                 // Género del estudiante
+  herramienta_tecnica: string;    // Herramienta técnica preferida
+  pais_de_origen: string;         // País de origen
+  colegio_de_origen: string;      // Colegio de procedencia
+  codigo_de_grupo: string;        // Código del grupo académico
+  universidad: string;            // Universidad donde estudia
+  facultad: string;               // Facultad de la universidad
+  materia_favorita: string;       // Materia favorita
+  horario: string;                // Horario de clases
+  año_carrera: string;            // Año de la carrera
 }
 
+/**
+ * Valores iniciales del formulario
+ * 
+ * Se utiliza tanto para inicializar el formulario como para
+ * limpiarlo después de una operación exitosa.
+ */
 const initialForm: StudentForm = {
   nombre: '',
   apellido: '',
@@ -55,43 +95,75 @@ const initialForm: StudentForm = {
   año_carrera: ''
 };
 
+// Tipos para la navegación y parámetros de ruta
 type Nav = NativeStackNavigationProp<RootStackParamList, 'NewStudent'>;
 type NewStudentRouteProp = RouteProp<RootStackParamList, 'NewStudent'>;
 
+/**
+ * Componente principal de la pantalla de crear/editar estudiante
+ * 
+ * Este componente maneja tanto la creación de nuevos estudiantes
+ * como la edición de estudiantes existentes, dependiendo de los
+ * parámetros recibidos en la navegación.
+ */
 export default function NewStudentScreen() {
-  const [form, setForm] = useState<StudentForm>(initialForm);
-  const [editing, setEditing] = useState(false);
-  const [originalCedula, setOriginalCedula] = useState<string | null>(null);
+  // Estados para manejar el formulario y la interfaz
+  const [form, setForm] = useState<StudentForm>(initialForm);        // Datos del formulario
+  const [editing, setEditing] = useState(false);                     // Modo de edición
+  const [originalCedula, setOriginalCedula] = useState<string | null>(null); // Cédula original para edición
+  
+  // Hooks de navegación
   const navigation = useNavigation<Nav>();
   const route = useRoute<NewStudentRouteProp>();
 
+  /**
+   * Efecto que se ejecuta al montar el componente
+   * 
+   * Si se recibe un estudiante como parámetro, se carga en el formulario
+   * y se activa el modo de edición.
+   */
   useEffect(() => {
     if (route.params?.student) {
       const s = route.params.student as StudentForm & { edad: number };
-      // Map number edad to string
+      // Convertir edad de número a string para el formulario
       setForm({ ...s, edad: s.edad?.toString() ?? '' });
-      setEditing(true);
-      setOriginalCedula(s.cedula);
+      setEditing(true); // Activar modo de edición
+      setOriginalCedula(s.cedula); // Guardar cédula original
     }
   }, [route.params]);
   
+  /**
+   * Función para actualizar campos del formulario
+   * 
+   * @param key - Clave del campo a actualizar
+   * @param value - Nuevo valor del campo
+   */
   const onChange = (key: keyof StudentForm, value: string) => {
     setForm({...form, [key]: value});
   };
   
+  /**
+   * Función para enviar el formulario
+   * 
+   * Maneja tanto la creación como la actualización de estudiantes,
+   * incluyendo validación y registro de actividades.
+   */
   const onSubmit = async () => {
-    // Validación básica
+    // Validación básica de campos obligatorios
     if (!form.nombre || !form.apellido || !form.cedula) {
       toast.error('Nombre, apellido y cédula son obligatorios');
       return;
     }
     
     try {
+      // Preparar payload convirtiendo edad a número
       const payload = {
         ...form,
         edad: form.edad ? parseInt(form.edad) : null,
       };
+      
       if (editing) {
+        // Modo de edición: actualizar estudiante existente
         const { data, error } = await supabase
           .from('Estudiantes')
           .update(payload)
@@ -101,6 +173,7 @@ export default function NewStudentScreen() {
         toast.success('Estudiante actualizado');
         await activityOperations.log('actualizado', `Estudiante ${form.nombre} ${form.apellido} actualizado`);
       } else {
+        // Modo de creación: insertar nuevo estudiante
         const { data, error } = await supabase
           .from('Estudiantes')
           .insert([payload])
