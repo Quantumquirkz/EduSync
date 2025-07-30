@@ -12,16 +12,16 @@ El backend de EduSync está desarrollado con **Spring Boot 3.3.0** y **Java 17**
 graph TB
     subgraph "SPRING BOOT 3.3.0"
         subgraph "PRESENTATION LAYER"
-            PL1[@RestController]
-            PL2[@RequestMapping]
-            PL3[@GetMapping]
-            PL4[@PostMapping]
-            PL5[@PutMapping]
-            PL6[@DeleteMapping]
+            PL1["@RestController"]
+            PL2["@RequestMapping"]
+            PL3["@GetMapping"]
+            PL4["@PostMapping"]
+            PL5["@PutMapping"]
+            PL6["@DeleteMapping"]
         end
         
         subgraph "BUSINESS LAYER"
-            BL1[@Service]
+            BL1["@Service"]
             BL2[Business Logic]
             BL3[Validation]
             BL4[Transaction]
@@ -30,7 +30,7 @@ graph TB
         end
         
         subgraph "DATA ACCESS LAYER"
-            DAL1[@Repository]
+            DAL1["@Repository"]
             DAL2[JDBC Template]
             DAL3[SQL Queries]
             DAL4[Row Mappers]
