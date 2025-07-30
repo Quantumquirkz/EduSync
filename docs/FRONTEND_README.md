@@ -89,7 +89,7 @@ El frontend de EduSync es una aplicación móvil desarrollada con **React Native
 
 ### **Estructura del Proyecto**
 ```
-EduSyncApp/a0-project/
+EduSyncApp/mobile-app/
 ├── screens/                    # Pantallas de la aplicación
 │   ├── auth/                  # Autenticación
 │   │   ├── LoginScreen.tsx

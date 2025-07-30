@@ -324,7 +324,7 @@ supabase status
 ### **3. Despliegue del Backend**
 ```bash
 # Navegar al directorio del backend
-cd EduSyncApp/a0-project/backend
+cd EduSyncApp/mobile-app/backend
 
 # Construir JAR
 mvn clean package

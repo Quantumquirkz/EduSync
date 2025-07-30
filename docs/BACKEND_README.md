@@ -338,7 +338,7 @@ spring.web.cors.allowed-headers=*
 
 ```bash
 # Navegar al directorio del backend
-cd EduSyncApp/a0-project/backend
+cd EduSyncApp/mobile-app/backend
 
 # Compilar el proyecto
 mvn clean compile

@@ -5,8 +5,8 @@ echo "🧹 Limpiando archivos sensibles del repositorio..."
 # Eliminar archivo .env del tracking de git
 git rm --cached .env 2>/dev/null || echo "Archivo .env no encontrado en git"
 
-# Eliminar archivo .env de EduSyncApp/a0-project si existe
-git rm --cached EduSyncApp/a0-project/.env 2>/dev/null || echo "Archivo EduSyncApp/a0-project/.env no encontrado en git"
+# Eliminar archivo .env de EduSyncApp/mobile-app si existe
+git rm --cached EduSyncApp/mobile-app/.env 2>/dev/null || echo "Archivo EduSyncApp/mobile-app/.env no encontrado en git"
 
 # Agregar .gitignore a la raíz si no existe
 if [ ! -f .gitignore ]; then

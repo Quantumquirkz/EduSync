@@ -25,7 +25,7 @@ GROQ_API_KEY=tu_groq_api_key_aqui
 
 ### Opción 1: Archivo .env (Recomendado para desarrollo)
 
-1. Crea un archivo `.env` en la raíz del proyecto (`EduSyncApp/a0-project/.env`)
+1. Crea un archivo `.env` en la raíz del proyecto (`EduSyncApp/mobile-app/.env`)
 2. Agrega las variables:
 
 ```bash

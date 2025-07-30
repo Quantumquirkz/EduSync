@@ -118,7 +118,7 @@ Cada estudiante incluye los siguientes campos:
 
 ```
 EduSyncApp/
-├── a0-project/                    # Proyecto principal
+├── mobile-app/                    # Proyecto principal
 │   ├── assets/                    # Recursos estáticos
 │   │   ├── icon.png              # Icono de la aplicación
 │   │   ├── splash-icon.png       # Icono de splash screen
@@ -273,7 +273,7 @@ export const GROQ_API_KEY = ''; // Configurar en variables de entorno
 1. **Clonar el repositorio**
    ```bash
    git clone <repository-url>
-   cd EduSyncApp/a0-project
+   cd EduSyncApp/mobile-app
    ```
 
 2. **Instalar dependencias del frontend**
@@ -482,6 +482,21 @@ export const GROQ_API_KEY = ''; // Configurar en variables de entorno
 - [ ] Optimización de rendimiento
 - [ ] Mejoras en la accesibilidad
 - [ ] Tests automatizados completos
+
+## 📚 Documentación
+
+Para información detallada sobre cada componente del proyecto, consulta la documentación específica en la carpeta `docs/`:
+
+- **[📋 Índice de Documentación](docs/README.md)** - Guía completa de toda la documentación disponible
+- **[🏗️ Estructura del Proyecto](docs/PROJECT_STRUCTURE.md)** - Organización de carpetas y archivos
+- **[🎨 Frontend](docs/FRONTEND_README.md)** - Documentación completa de React Native y Expo
+- **[⚙️ Backend](docs/BACKEND_README.md)** - Configuración y desarrollo del servidor Spring Boot
+- **[🗄️ Base de Datos](docs/DATABASE_README.md)** - Estructura y operaciones de Supabase
+- **[🚀 Despliegue](docs/HOSTING_README.md)** - Guía completa de hosting y producción
+- **[📝 Changelog](docs/CHANGELOG.md)** - Registro de cambios y actualizaciones
+
+### 🛠️ Configuración Inicial
+Para comenzar con el desarrollo, sigue las instrucciones en **[SETUP.md](EduSyncApp/mobile-app/SETUP.md)**.
 
 ## 📞 Soporte y Contacto
 
