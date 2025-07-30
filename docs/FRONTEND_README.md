@@ -6,75 +6,210 @@ El frontend de EduSync es una aplicación móvil desarrollada con **React Native
 
 ## 🏗️ Arquitectura del Frontend
 
+### Arquitectura React Native
+
+```mermaid
+graph TB
+    subgraph "EXPO SDK 52 (React Native + Expo)"
+        subgraph "PRESENTATION LAYER"
+            PL1[Screens]
+            PL2[Components]
+            PL3[Navigation]
+            PL4[UI/UX]
+            PL5[Animations]
+            PL6[Gestures]
+        end
+        
+        subgraph "BUSINESS LAYER"
+            BL1[Hooks]
+            BL2[Context API]
+            BL3[State Management]
+            BL4[Business Logic]
+            BL5[Validation]
+            BL6[Form Handling]
+        end
+        
+        subgraph "DATA ACCESS LAYER"
+            DAL1[Supabase Client]
+            DAL2[Database Utils]
+            DAL3[Activity Utils]
+            DAL4[API Calls]
+            DAL5[Error Handling]
+            DAL6[Caching]
+        end
+        
+        subgraph "EXTERNAL SERVICES"
+            ES1[Supabase]
+            ES2[Groq API]
+            ES3[AsyncStorage]
+            ES4[Device APIs]
+            ES5[Permissions]
+            ES6[Notifications]
+        end
+    end
+    
+    PL1 --> BL1
+    BL1 --> DAL1
+    DAL1 --> ES1
+    
+    PL2 --> BL2
+    BL2 --> DAL2
+    DAL2 --> ES2
+    
+    PL3 --> BL3
+    BL3 --> DAL3
+    DAL3 --> ES3
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ARQUITECTURA REACT NATIVE                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                    EXPO SDK 52                                 │
-│                              (React Native + Expo)                             │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Flujo de Componentes
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   PRESENTATION  │    │   BUSINESS      │    │   DATA ACCESS   │    │   EXTERNAL      │
-│   LAYER         │    │   LAYER         │    │   LAYER         │    │   SERVICES      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • Screens             │ • Hooks               │ • Supabase Client     │ • Supabase
-         │ • Components          │ • Context API         │ • Database Utils      │ • Groq API
-         │ • Navigation          │ • State Management    │ • Activity Utils      │ • AsyncStorage
-         │ • UI/UX               │ • Business Logic      │ • API Calls           │ • Device APIs
-         │ • Animations          │ • Validation          │ • Error Handling      │ • Permissions
-         │ • Gestures            │ • Form Handling       │ • Caching             │ • Notifications
+```mermaid
+graph LR
+    subgraph "APP.TSX (Root)"
+        A1[SafeAreaProvider]
+        A2[NavigationContainer]
+        A3[Theme Provider]
+        A4[Toast Container]
+        A5[Error Boundaries]
+        A6[Global State]
+    end
+    
+    subgraph "NAVIGATION CONTAINER"
+        N1[Stack Navigator]
+        N2[Tab Navigator]
+        N3[Route Management]
+        N4[Screen Options]
+        N5[Navigation Events]
+        N6[Deep Linking]
+    end
+    
+    subgraph "SCREENS (Pages)"
+        S1[WelcomeScreen]
+        S2[HomeScreen]
+        S3[StudentsListScreen]
+        S4[StudentDetailScreen]
+        S5[NewStudentScreen]
+        S6[StatisticsScreen]
+    end
+    
+    subgraph "COMPONENTS (Reusable)"
+        C1[StudentCard]
+        C2[Button]
+        C3[Input]
+        C4[Modal]
+        C5[Loading]
+        C6[Error]
+    end
+    
+    A1 --> N1
+    N1 --> S1
+    S1 --> C1
+    
+    A2 --> N2
+    N2 --> S2
+    S2 --> C2
+    
+    A3 --> N3
+    N3 --> S3
+    S3 --> C3
+```
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              FLUJO DE COMPONENTES                              │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Ciclo de Vida de Componentes
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   APP.TSX       │    │   NAVIGATION    │    │   SCREENS       │    │   COMPONENTS    │
-│   (Root)        │    │   CONTAINER     │    │   (Pages)       │    │   (Reusable)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • SafeAreaProvider    │ • Stack Navigator     │ • WelcomeScreen       │ • StudentCard
-         │ • NavigationContainer │ • Tab Navigator       │ • HomeScreen          │ • Button
-         │ • Theme Provider      │ • Route Management    │ • StudentsListScreen  │ • Input
-         │ • Toast Container     │ • Screen Options      │ • StudentDetailScreen │ • Modal
-         │ • Error Boundaries    │ • Navigation Events   │ • NewStudentScreen    │ • Loading
-         │ • Global State        │ • Deep Linking        │ • StatisticsScreen    │ • Error
+```mermaid
+flowchart TD
+    subgraph "MOUNTING PHASE"
+        M1[constructor()]
+        M2[render()]
+        M3[componentDidMount]
+        M4[useEffect(()=>{},[])]
+        M5[useState()]
+        M6[Context Provider]
+    end
+    
+    subgraph "UPDATING PHASE"
+        U1[shouldComponentUpdate]
+        U2[componentWillUpdate]
+        U3[render()]
+        U4[componentDidUpdate]
+        U5[useEffect()]
+        U6[useCallback()]
+    end
+    
+    subgraph "UNMOUNTING PHASE"
+        UM1[componentWillUnmount]
+        UM2[cleanup()]
+        UM3[cancel subscriptions]
+        UM4[clear timers]
+        UM5[remove listeners]
+        UM6[memory cleanup]
+    end
+    
+    subgraph "ERROR HANDLING"
+        E1[componentDidCatch]
+        E2[Error Boundary]
+        E3[Fallback UI]
+        E4[Error Logging]
+        E5[User Notification]
+        E6[Retry Logic]
+    end
+    
+    M1 --> M2 --> M3 --> M4 --> M5 --> M6
+    M6 --> U1 --> U2 --> U3 --> U4 --> U5 --> U6
+    U6 --> UM1 --> UM2 --> UM3 --> UM4 --> UM5 --> UM6
+    M6 --> E1 --> E2 --> E3 --> E4 --> E5 --> E6
+```
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              CICLO DE VIDA DE COMPONENTES                      │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Estado y Gestión de Datos
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   MOUNTING      │    │   UPDATING      │    │   UNMOUNTING    │    │   ERROR         │
-│   PHASE         │    │   PHASE         │    │   PHASE         │    │   HANDLING      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • constructor()       │ • shouldComponentUpdate│ • componentWillUnmount│ • componentDidCatch
-         │ • render()            │ • componentWillUpdate │ • cleanup()          │ • Error Boundary
-         │ • componentDidMount   │ • render()            │ • cancel subscriptions│ • Fallback UI
-         │ • useEffect(()=>{},[])│ • componentDidUpdate  │ • clear timers        │ • Error Logging
-         │ • useState()          │ • useEffect()         │ • remove listeners    │ • User Notification
-         │ • Context Provider    │ • useCallback()       │ • memory cleanup     │ • Retry Logic
-
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ESTADO Y GESTIÓN DE DATOS                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   LOCAL STATE   │    │   GLOBAL STATE  │    │   PERSISTENT    │    │   SERVER STATE  │
-│   (useState)    │    │   (Context)     │    │   STORAGE       │    │   (Supabase)    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • Component State     │ • App Theme           │ • User Preferences    │ • Students Data
-         │ • Form Data           │ • User Session        │ • Auth Tokens         │ • Activities Log
-         │ • UI State            │ • Navigation State    │ • Offline Data        │ • Statistics
-         │ • Loading States      │ • Error State         │ • Cache Data          │ • Real-time Updates
-         │ • Animation State     │ • Global Settings     │ • Settings            │ • Search Results
-         │ • Modal State         │ • App Configuration   │ • User Profile        │ • Filtered Data
+```mermaid
+graph TD
+    subgraph "STATE MANAGEMENT"
+        subgraph "LOCAL STATE (useState)"
+            LS1[Component State]
+            LS2[Form Data]
+            LS3[UI State]
+            LS4[Loading States]
+            LS5[Animation State]
+            LS6[Modal State]
+        end
+        
+        subgraph "GLOBAL STATE (Context)"
+            GS1[App Theme]
+            GS2[User Session]
+            GS3[Navigation State]
+            GS4[Error State]
+            GS5[Global Settings]
+            GS6[App Configuration]
+        end
+        
+        subgraph "PERSISTENT STORAGE"
+            PS1[User Preferences]
+            PS2[Auth Tokens]
+            PS3[Offline Data]
+            PS4[Cache Data]
+            PS5[Settings]
+            PS6[User Profile]
+        end
+        
+        subgraph "SERVER STATE (Supabase)"
+            SS1[Students Data]
+            SS2[Activities Log]
+            SS3[Statistics]
+            SS4[Real-time Updates]
+            SS5[Search Results]
+            SS6[Filtered Data]
+        end
+    end
+    
+    LS1 --> GS1
+    GS1 --> PS1
+    PS1 --> SS1
+    
+    style LS1 fill:#e3f2fd
+    style GS1 fill:#f3e5f5
+    style PS1 fill:#e8f5e8
+    style SS1 fill:#fff3e0
 ```
 
 ### **Framework**: React Native con Expo SDK 52
@@ -88,37 +223,37 @@ El frontend de EduSync es una aplicación móvil desarrollada con **React Native
 - **Notificaciones**: Sonner Native para toast notifications con animaciones
 
 ### **Estructura del Proyecto**
-```
-EduSyncApp/mobile-app/
-├── screens/                    # Pantallas de la aplicación
-│   ├── auth/                  # Autenticación
-│   │   ├── LoginScreen.tsx
-│   │   └── SignUpScreen.tsx
-│   ├── WelcomeScreen.tsx      # Pantalla de bienvenida
-│   ├── HomeScreen.tsx         # Pantalla principal
-│   ├── StudentsListScreen.tsx # Lista de estudiantes
-│   ├── StudentDetailScreen.tsx # Detalle de estudiante
-│   ├── NewStudentScreen.tsx   # Crear nuevo estudiante
-│   ├── StatisticsScreen.tsx   # Estadísticas
-│   ├── ProfileScreen.tsx      # Perfil de usuario
-│   ├── SettingsScreen.tsx     # Configuraciones
-│   ├── ChatbotScreen.tsx      # Chatbot
-│   └── PresentationScreen.tsx # Presentación del proyecto
-├── hooks/                     # Custom hooks
-│   └── useSupabase.ts
-├── utils/                     # Utilidades
-│   ├── database.ts           # Operaciones de base de datos
-│   └── activity.ts           # Gestión de actividades
-├── assets/                    # Recursos estáticos
-│   ├── icon.png
-│   ├── splash-icon.png
-│   ├── adaptive-icon.png
-│   └── favicon.png
-├── App.tsx                   # Componente principal
-├── config.ts                 # Configuración de APIs
-├── supabaseClient.ts         # Cliente de Supabase
-├── package.json              # Dependencias
-└── app.json                 # Configuración de Expo
+
+```mermaid
+graph TD
+    A[EduSyncApp/mobile-app/] --> B[screens/]
+    A --> C[utils/]
+    A --> D[hooks/]
+    A --> E[assets/]
+    A --> F[backend/]
+    A --> G[App.tsx]
+    A --> H[package.json]
+    
+    B --> I[auth/]
+    B --> J[WelcomeScreen.tsx]
+    B --> K[HomeScreen.tsx]
+    B --> L[StudentsListScreen.tsx]
+    B --> M[StudentDetailScreen.tsx]
+    B --> N[NewStudentScreen.tsx]
+    B --> O[StatisticsScreen.tsx]
+    
+    I --> P[LoginScreen.tsx]
+    I --> Q[SignUpScreen.tsx]
+    
+    C --> R[database.ts]
+    C --> S[activity.ts]
+    
+    D --> T[useSupabase.ts]
+    
+    style A fill:#f3e5f5
+    style B fill:#e8f5e8
+    style C fill:#fff3e0
+    style D fill:#fce4ec
 ```
 
 ## 📦 Dependencias Principales

@@ -6,74 +6,217 @@ EduSync utiliza una arquitectura distribuida con diferentes servicios hosteados 
 
 ## 🏗️ Arquitectura de Hosting
 
+### Arquitectura Distribuida
+
+```mermaid
+graph TB
+    subgraph "EDUSYNC (Multi-Cloud Setup)"
+        subgraph "FRONTEND"
+            A[React Native App]
+            A1[Expo SDK 52]
+            A2[React Native 0.76]
+            A3[TypeScript 5.1]
+            A4[Cross-platform]
+            A5[Native Performance]
+            A6[Offline Support]
+        end
+        
+        subgraph "BACKEND"
+            B[Spring Boot App]
+            B1[Java 17]
+            B2[Spring Boot 3.3.0]
+            B3[Maven 3.8+]
+            B4[REST API]
+            B5[JDBC Template]
+            B6[Connection Pooling]
+        end
+        
+        subgraph "BASE DE DATOS"
+            C[Supabase Database]
+            C1[PostgreSQL 14.0]
+            C2[Supabase Cloud]
+            C3[AWS RDS]
+            C4[Row Level Security]
+            C5[Real-time Subscriptions]
+            C6[Automatic Backups]
+        end
+        
+        subgraph "CHATBOT"
+            D[Groq API]
+            D1[Llama 3.1 8B]
+            D2[Groq Cloud]
+            D3[Global CDN]
+            D4[Rate Limiting]
+            D5[Pay-per-use]
+            D6[<100ms Latency]
+        end
+    end
+    
+    A --> B
+    B --> C
+    A --> D
+    B --> D
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ARQUITECTURA DISTRIBUIDA                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                    EDUSYNC                                     │
-│                              (Multi-Cloud Setup)                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Infraestructura de Red
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   FRONTEND      │    │   BACKEND       │    │   BASE DE       │    │   CHATBOT       │
-│   (React Native)│    │   (Spring Boot) │    │   DATOS         │    │   (Groq API)    │
-│                 │    │                 │    │   (Supabase)    │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • Expo SDK 52         │ • Java 17             │ • PostgreSQL 14.0     │ • Llama 3.1 8B
-         │ • React Native 0.76   │ • Spring Boot 3.3.0   │ • Supabase Cloud      │ • Groq Cloud
-         │ • TypeScript 5.1      │ • Maven 3.8+          │ • AWS RDS             │ • Global CDN
-         │ • Cross-platform      │ • REST API            │ • Row Level Security  │ • Rate Limiting
-         │ • Native Performance  │ • JDBC Template       │ • Real-time Subscriptions│ • Pay-per-use
-         │ • Offline Support     │ • Connection Pooling  │ • Automatic Backups   │ • <100ms Latency
+```mermaid
+graph LR
+    subgraph "CLIENT DEVICES"
+        CD1[iOS Devices]
+        CD2[Android Devices]
+        CD3[Web Browsers]
+        CD4[Development Tools]
+        CD5[Testing Devices]
+    end
+    
+    subgraph "INTERNET"
+        I1[DNS Resolution]
+        I2[Load Balancing]
+        I3[SSL/TLS 1.3]
+        I4[CDN Distribution]
+        I5[Rate Limiting]
+    end
+    
+    subgraph "CLOUD PROVIDERS"
+        CP1[AWS (Supabase)]
+        CP2[Heroku (Backend)]
+        CP3[Groq (Chatbot)]
+        CP4[Expo (Frontend)]
+        CP5[GitHub (Code)]
+    end
+    
+    subgraph "DATABASE CLUSTERS"
+        DC1[Primary Node]
+        DC2[Read Replicas]
+        DC3[Failover]
+        DC4[Point-in-time Recovery]
+    end
+    
+    CD1 --> I1
+    CD2 --> I2
+    CD3 --> I3
+    CD4 --> I4
+    CD5 --> I5
+    
+    I1 --> CP1
+    I2 --> CP2
+    I3 --> CP3
+    I4 --> CP4
+    I5 --> CP5
+    
+    CP1 --> DC1
+    CP2 --> DC2
+    CP3 --> DC3
+    CP4 --> DC4
+```
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              INFRAESTRUCTURA DE RED                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Flujo de Despliegue
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CLIENT        │    │   INTERNET      │    │   CLOUD         │    │   DATABASE      │
-│   DEVICES       │    │   (HTTPS/TLS)   │    │   PROVIDERS     │    │   CLUSTERS      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • iOS Devices         │ • DNS Resolution      │ • AWS (Supabase)      │ • Primary Node
-         │ • Android Devices     │ • Load Balancing      │ • Heroku (Backend)    │ • Read Replicas
-         │ • Web Browsers        │ • SSL/TLS 1.3         │ • Groq (Chatbot)      │ • Failover
-         │ • Development Tools   │ • CDN Distribution    │ • Expo (Frontend)     │ • Point-in-time
-         │ • Testing Devices     │ • Rate Limiting       │ • GitHub (Code)       │   Recovery
+```mermaid
+flowchart LR
+    subgraph "DEVELOPMENT"
+        D1[Local Development]
+        D2[Hot Reloading]
+        D3[Debug Tools]
+        D4[Mock Data]
+        D5[Development DB]
+        D6[Local APIs]
+    end
+    
+    subgraph "STAGING"
+        S1[Test Environment]
+        S2[Integration Tests]
+        S3[Performance Tests]
+        S4[Security Scans]
+        S5[Staging DB]
+        S6[Staging APIs]
+    end
+    
+    subgraph "PRODUCTION"
+        P1[Live Environment]
+        P2[Load Balancing]
+        P3[Auto-scaling]
+        P4[SSL Certificates]
+        P5[Production DB]
+        P6[Production APIs]
+    end
+    
+    subgraph "MONITORING"
+        M1[Application Performance]
+        M2[Error Tracking]
+        M3[User Analytics]
+        M4[System Health]
+        M5[Alert System]
+    end
+    
+    D1 --> S1
+    S1 --> P1
+    P1 --> M1
+    
+    D2 --> S2
+    S2 --> P2
+    P2 --> M2
+    
+    D3 --> S3
+    S3 --> P3
+    P3 --> M3
+    
+    D4 --> S4
+    S4 --> P4
+    P4 --> M4
+    
+    D5 --> S5
+    S5 --> P5
+    P5 --> M5
+```
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              FLUJO DE DESPLIEGUE                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Seguridad y Compliance
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   DEVELOPMENT   │    │   STAGING       │    │   PRODUCTION    │    │   MONITORING    │
-│   ENVIRONMENT   │    │   ENVIRONMENT   │    │   ENVIRONMENT   │    │   & LOGS        │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • Local Development   │ • Test Environment    │ • Live Environment    │ • Application
-         │ • Hot Reloading       │ • Integration Tests   │ • Load Balancing      │   Performance
-         │ • Debug Tools         │ • Performance Tests   │ • Auto-scaling        │ • Error Tracking
-         │ • Mock Data           │ • Security Scans      │ • SSL Certificates    │ • User Analytics
-         │ • Development DB      │ • Staging DB          │ • Production DB       │ • System Health
-         │ • Local APIs          │ • Staging APIs        │ • Production APIs     │ • Alert System
-
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              SEGURIDAD Y COMPLIANCE                            │
-└─────────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   AUTHENTICATION│    │   AUTHORIZATION │    │   ENCRYPTION    │    │   COMPLIANCE    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • JWT Tokens          │ • Row Level Security  │ • TLS 1.3             │ • GDPR Compliance
-         │ • OAuth 2.0           │ • Role-based Access   │ • AES-256             │ • Data Protection
-         │ • Multi-factor Auth   │ • API Rate Limiting   │ • At-rest Encryption  │ • Privacy Policy
-         │ • Session Management  │ • CORS Policies       │ • In-transit Encryption│ • Cookie Consent
-         │ • Password Policies   │ • Input Validation    │ • Key Management      │ • Data Retention
-         │ • Account Lockout     │ • SQL Injection       │ • Certificate Rotation│ • Audit Logging
+```mermaid
+graph TD
+    subgraph "SECURITY & COMPLIANCE"
+        subgraph "AUTHENTICATION"
+            AUTH1[JWT Tokens]
+            AUTH2[OAuth 2.0]
+            AUTH3[Multi-factor Auth]
+            AUTH4[Session Management]
+            AUTH5[Password Policies]
+            AUTH6[Account Lockout]
+        end
+        
+        subgraph "AUTHORIZATION"
+            AUTHZ1[Row Level Security]
+            AUTHZ2[Role-based Access]
+            AUTHZ3[API Rate Limiting]
+            AUTHZ4[CORS Policies]
+            AUTHZ5[Input Validation]
+            AUTHZ6[SQL Injection Protection]
+        end
+        
+        subgraph "ENCRYPTION"
+            ENC1[TLS 1.3]
+            ENC2[AES-256]
+            ENC3[At-rest Encryption]
+            ENC4[In-transit Encryption]
+            ENC5[Key Management]
+            ENC6[Certificate Rotation]
+        end
+        
+        subgraph "COMPLIANCE"
+            COMP1[GDPR Compliance]
+            COMP2[Data Protection]
+            COMP3[Privacy Policy]
+            COMP4[Cookie Consent]
+            COMP5[Data Retention]
+            COMP6[Audit Logging]
+        end
+    end
+    
+    style AUTH1 fill:#4caf50
+    style AUTHZ1 fill:#2196f3
+    style ENC1 fill:#ff9800
+    style COMP1 fill:#f44336
 ```
 
 ## 🗄️ Base de Datos - Supabase
@@ -97,15 +240,6 @@ EduSync utiliza una arquitectura distribuida con diferentes servicios hosteados 
 // Configuración de Supabase
 export const SUPABASE_URL = 'https://faollalzdyoigzfzggwy.supabase.co';
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-
-// Configuración de conexión directa
-export const DB_CONFIG = {
-  host: 'aws-0-us-east-2.pooler.supabase.com',
-  port: 6543,
-  database: 'postgres',
-  user: 'postgres.faollalzdyoigzfzggwy',
-  pool_mode: 'transaction',
-};
 ```
 
 ### **Ventajas de Supabase**

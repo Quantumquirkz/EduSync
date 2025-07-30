@@ -6,53 +6,70 @@
 
 ## 🏗️ Arquitectura del Sistema
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ARQUITECTURA EDUSYNC                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Arquitectura General
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   FRONTEND      │    │   BACKEND       │    │   BASE DE       │    │   CHATBOT       │
-│   (React Native)│    │   (Spring Boot) │    │   DATOS         │    │   (Groq API)    │
-│                 │    │                 │    │   (Supabase)    │    │                 │
-│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │   Expo      │ │    │ │ Java 17     │ │    │ │ PostgreSQL  │ │    │ │ Llama 3.1   │ │
-│ │   CLI       │ │    │ │ Spring Boot │ │    │ │ 14.0        │ │    │ │ 8B Model    │ │
-│ │   SDK       │ │    │ │ 3.3.0       │ │    │ │             │ │    │ │             │ │
-│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
-│                 │    │                 │    │                 │    │                 │
-│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │ React       │ │    │ │ REST API    │ │    │ │ Row Level   │ │    │ │ API REST    │ │
-│ │ Navigation  │ │    │ │ Controllers │ │    │ │ Security    │ │    │ │ Endpoints   │ │
-│ │ v7          │ │    │ │ JDBC        │ │    │ │ (RLS)       │ │    │ │             │ │
-│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
-│                 │    │                 │    │                 │    │                 │
-│ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │    │ ┌─────────────┐ │
-│ │ TypeScript  │ │    │ │ Maven       │ │    │ │ Real-time   │ │    │ │ Rate        │ │
-│ │ Hooks       │ │    │ │ Build Tool  │ │    │ │ Subscriptions│ │    │ │ Limiting    │ │
-│ │ Context API │ │    │ │             │ │    │ │             │ │    │ │             │ │
-│ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │    │ └─────────────┘ │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │                       │                       │                       │
-         └───────────────────────┼───────────────────────┼───────────────────────┘
-                                 │                       │
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                    FLUJO DE DATOS                          │
-                    └─────────────────────────────────────────────────────────────┘
-                    
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Usuario       │    │   Frontend      │    │   Backend       │    │   Base de       │
-│   Interactúa    │───▶│   Procesa       │───▶│   Valida        │───▶│   Datos         │
-│   con la App    │    │   Datos         │    │   y Ejecuta     │    │   Almacena      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         ▲                       │                       │                       │
-         │                       │                       │                       │
-         └───────────────────────┼───────────────────────┼───────────────────────┘
-                                 │                       │
-                    ┌─────────────────────────────────────────────────────────────┐
-                    │                 RESPUESTA Y ACTUALIZACIÓN                   │
-                    └─────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph "ARQUITECTURA EDUSYNC"
+        subgraph "FRONTEND"
+            A1[Expo CLI SDK]
+            A2[React Navigation v7]
+            A3[TypeScript Hooks Context API]
+        end
+        
+        subgraph "BACKEND"
+            B1[Java 17 Spring Boot 3.3.0]
+            B2[REST API Controllers]
+            B3[Maven Build Tool]
+        end
+        
+        subgraph "BASE DE DATOS"
+            C1[PostgreSQL 14.0]
+            C2[Row Level Security RLS]
+            C3[Real-time Subscriptions]
+        end
+        
+        subgraph "CHATBOT"
+            D1[Llama 3.1 8B Model]
+            D2[API REST Endpoints]
+            D3[Rate Limiting]
+        end
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    A1 --> D1
+    A2 --> D2
+    A3 --> D3
+```
+
+### Flujo de Datos
+
+```mermaid
+flowchart LR
+    subgraph "ENTRADA"
+        U[Usuario Interactúa con la App]
+    end
+    
+    subgraph "PROCESAMIENTO"
+        F[Frontend Procesa Datos]
+        B[Backend Valida y Ejecuta]
+        D[Base de Datos Almacena]
+    end
+    
+    subgraph "RESPUESTA"
+        R[Respuesta y Actualización]
+    end
+    
+    U --> F
+    F --> B
+    B --> D
+    D --> R
+    R --> U
 ```
 
 ### **Frontend (Aplicación Móvil)**
@@ -116,57 +133,37 @@ Cada estudiante incluye los siguientes campos:
 
 ## 🗂️ Estructura del Proyecto
 
-```
-EduSyncApp/
-├── mobile-app/                    # Proyecto principal
-│   ├── assets/                    # Recursos estáticos
-│   │   ├── icon.png              # Icono de la aplicación
-│   │   ├── splash-icon.png       # Icono de splash screen
-│   │   ├── adaptive-icon.png     # Icono adaptativo
-│   │   └── favicon.png           # Favicon
-│   │
-│   ├── screens/                   # Pantallas de la aplicación
-│   │   ├── auth/                 # Autenticación
-│   │   │   ├── LoginScreen.tsx   # Pantalla de login
-│   │   │   └── SignUpScreen.tsx  # Pantalla de registro
-│   │   ├── WelcomeScreen.tsx     # Pantalla de bienvenida
-│   │   ├── HomeScreen.tsx        # Pantalla principal
-│   │   ├── StudentsListScreen.tsx # Lista de estudiantes
-│   │   ├── StudentDetailScreen.tsx # Detalle de estudiante
-│   │   ├── NewStudentScreen.tsx  # Crear nuevo estudiante
-│   │   ├── StatisticsScreen.tsx  # Estadísticas
-│   │   ├── ProfileScreen.tsx     # Perfil de usuario
-│   │   ├── SettingsScreen.tsx    # Configuraciones
-│   │   ├── ChatbotScreen.tsx     # Chatbot
-│   │   └── PresentationScreen.tsx # Presentación del proyecto
-│   │
-│   ├── hooks/                     # Custom hooks
-│   │   └── useSupabase.ts        # Hook para Supabase
-│   │
-│   ├── utils/                     # Utilidades
-│   │   ├── database.ts           # Operaciones de base de datos
-│   │   └── activity.ts           # Gestión de actividades
-│   │
-│   ├── backend/                   # Backend Spring Boot
-│   │   ├── src/main/java/com/example/gestionestudiantes/
-│   │   │   ├── controller/       # Controladores REST
-│   │   │   │   └── StudentController.java
-│   │   │   ├── model/           # Modelos de datos
-│   │   │   │   └── Student.java
-│   │   │   ├── repository/      # Repositorios de datos
-│   │   │   │   └── StudentRepository.java
-│   │   │   └── GestionEstudiantesApplication.java
-│   │   └── pom.xml              # Configuración Maven
-│   │
-│   ├── convex/                   # Convex (no utilizado actualmente)
-│   │   └── _generated/
-│   │
-│   ├── App.tsx                   # Componente principal
-│   ├── config.ts                 # Configuración de APIs
-│   ├── supabaseClient.ts         # Cliente de Supabase
-│   ├── package.json              # Dependencias de Node.js
-│   ├── tsconfig.json            # Configuración TypeScript
-│   └── app.json                 # Configuración de Expo
+```mermaid
+graph TD
+    A[EduSyncApp/] --> B[mobile-app/]
+    A --> C[backend/]
+    
+    B --> D[screens/]
+    B --> E[utils/]
+    B --> F[assets/]
+    B --> G[hooks/]
+    
+    D --> H[HomeScreen.tsx]
+    D --> I[NewStudentScreen.tsx]
+    D --> J[StudentsListScreen.tsx]
+    D --> K[auth/]
+    
+    K --> L[LoginScreen.tsx]
+    K --> M[SignUpScreen.tsx]
+    
+    E --> N[activity.ts]
+    E --> O[database.ts]
+    
+    C --> P[src/main/java/]
+    C --> Q[pom.xml]
+    
+    P --> R[controller/]
+    P --> S[model/]
+    P --> T[repository/]
+    
+    R --> U[StudentController.java]
+    S --> V[Student.java]
+    T --> W[StudentRepository.java]
 ```
 
 ## 🔧 Configuración y Tecnologías

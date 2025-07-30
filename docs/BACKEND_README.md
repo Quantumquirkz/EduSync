@@ -6,94 +6,131 @@ El backend de EduSync está desarrollado con **Spring Boot 3.3.0** y **Java 17**
 
 ## 🏗️ Arquitectura del Backend
 
+### Arquitectura Spring Boot
+
+```mermaid
+graph TB
+    subgraph "SPRING BOOT 3.3.0"
+        subgraph "PRESENTATION LAYER"
+            PL1[@RestController]
+            PL2[@RequestMapping]
+            PL3[@GetMapping]
+            PL4[@PostMapping]
+            PL5[@PutMapping]
+            PL6[@DeleteMapping]
+        end
+        
+        subgraph "BUSINESS LAYER"
+            BL1[@Service]
+            BL2[Business Logic]
+            BL3[Validation]
+            BL4[Transaction]
+            BL5[Exception Handling]
+            BL6[Logging]
+        end
+        
+        subgraph "DATA ACCESS LAYER"
+            DAL1[@Repository]
+            DAL2[JDBC Template]
+            DAL3[SQL Queries]
+            DAL4[Row Mappers]
+            DAL5[Data Access]
+            DAL6[Connection Mgmt]
+        end
+        
+        subgraph "DATABASE LAYER"
+            DL1[PostgreSQL]
+            DL2[Supabase]
+            DL3[Connection Pool]
+            DL4[RLS Policies]
+            DL5[Triggers]
+            DL6[Indexes]
+        end
+    end
+    
+    PL1 --> BL1
+    BL1 --> DAL1
+    DAL1 --> DL1
+    
+    style PL1 fill:#e3f2fd
+    style BL1 fill:#f3e5f5
+    style DAL1 fill:#e8f5e8
+    style DL1 fill:#fff3e0
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              ARQUITECTURA SPRING BOOT                          │
-└─────────────────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                                    SPRING BOOT                                 │
-│                                    3.3.0                                       │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Flujo de Request/Response
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   PRESENTATION  │    │   BUSINESS      │    │   DATA ACCESS   │    │   DATABASE      │
-│   LAYER         │    │   LAYER         │    │   LAYER         │    │   LAYER         │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • @RestController     │ • @Service            │ • @Repository         │ • PostgreSQL
-         │ • @RequestMapping     │ • Business Logic      │ • JDBC Template       │ • Supabase
-         │ • @GetMapping         │ • Validation          │ • SQL Queries         │ • Connection Pool
-         │ • @PostMapping        │ • Transaction         │ • Row Mappers         │ • RLS Policies
-         │ • @PutMapping         │ • Exception Handling  │ • Data Access         │ • Triggers
-         │ • @DeleteMapping      │ • Logging             │ • Connection Mgmt     │ • Indexes
+```mermaid
+sequenceDiagram
+    participant Client as React Native App
+    participant Controller as Controller Layer
+    participant Service as Service Layer
+    participant Repository as Repository Layer
+    participant DB as Database
+    
+    Client->>Controller: 1. HTTP Request<br/>GET /api/students
+    Controller->>Controller: 2. Request Mapping<br/>@GetMapping
+    Controller->>Service: 3. Call Service<br/>studentService.getAllStudents()
+    Service->>Service: 4. Business Logic<br/>Validation & Processing
+    Service->>Repository: 5. Call Repository<br/>studentRepo.findAll()
+    Repository->>DB: 6. Database Query<br/>JDBC Template SQL Execution
+    DB->>Repository: 7. Result Mapping<br/>Row Mapper Object Creation
+    Repository->>Service: 8. Return Data<br/>List<Student>
+    Service->>Service: 9. Process Response<br/>Business Logic Format Data
+    Service->>Controller: 10. HTTP Response<br/>JSON Format Status 200
+    Controller->>Client: Response
+```
 
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              FLUJO DE REQUEST/RESPONSE                         │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Componentes Principales
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CLIENT        │    │   CONTROLLER    │    │   SERVICE       │    │   REPOSITORY    │
-│   (React Native)│    │   LAYER         │    │   LAYER         │    │   LAYER         │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ 1. HTTP Request       │                       │                       │
-         │    GET /api/students  │                       │                       │
-         └──────────────────────▶│                       │                       │
-                                 │                       │                       │
-                                 │ 2. Request Mapping    │                       │
-                                 │    @GetMapping        │                       │
-                                 │                       │                       │
-                                 │ 3. Call Service       │                       │
-                                 │    studentService.    │                       │
-                                 │    getAllStudents()   │                       │
-                                 └──────────────────────▶│                       │
-                                                         │                       │
-                                                         │ 4. Business Logic     │                       │
-                                                         │    Validation         │                       │
-                                                         │    Processing         │                       │
-                                                         │                       │
-                                                         │ 5. Call Repository    │                       │
-                                                         │    studentRepo.       │                       │
-                                                         │    findAll()          │                       │
-                                                         └──────────────────────▶│                       │
-                                                                                 │                       │
-                                                                                 │ 6. Database Query     │                       │
-                                                                                 │    JDBC Template      │                       │
-                                                                                 │    SQL Execution      │                       │
-                                                                                 │                       │
-                                                                                 │ 7. Result Mapping     │                       │
-                                                                                 │    Row Mapper         │                       │
-                                                                                 │    Object Creation    │                       │
-                                                                                 │                       │
-                                                                                 │ 8. Return Data        │                       │
-                                                                                 │    List<Student>      │                       │
-                                                                                 └──────────────────────▶│                       │
-                                                         │                       │                       │
-                                                         │ 9. Process Response   │                       │
-                                                         │    Business Logic     │                       │
-                                                         │    Format Data        │                       │
-                                                         └──────────────────────▶│                       │
-                                 │                       │                       │                       │
-                                 │ 10. HTTP Response     │                       │                       │
-                                 │     JSON Format       │                       │                       │
-                                 │     Status 200        │                       │                       │
-                                 └──────────────────────▶│                       │                       │
-
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              COMPONENTES PRINCIPALES                           │
-└─────────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   CONTROLLERS   │    │   SERVICES      │    │   REPOSITORIES  │    │   MODELS        │
-└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │                       │
-         │ • StudentController   │ • StudentService      │ • StudentRepository   │ • Student Record
-         │ • REST Endpoints      │ • Business Logic      │ • Data Access         │ • Data Transfer
-         │ • Request Mapping     │ • Validation          │ • SQL Queries         │ • Immutable
-         │ • Response Handling   │ • Exception Handling  │ • Row Mapping         │ • Type Safety
-         │ • CORS Configuration  │ • Transaction Mgmt    │ • Connection Pool     │ • Serialization
-         │ • Error Handling      │ • Logging             │ • Prepared Statements │ • JSON Mapping
+```mermaid
+graph TD
+    subgraph "SPRING BOOT COMPONENTS"
+        subgraph "CONTROLLERS"
+            C1[StudentController]
+            C2[REST Endpoints]
+            C3[Request Mapping]
+            C4[Response Handling]
+            C5[CORS Configuration]
+            C6[Error Handling]
+        end
+        
+        subgraph "SERVICES"
+            S1[StudentService]
+            S2[Business Logic]
+            S3[Validation]
+            S4[Exception Handling]
+            S5[Transaction Mgmt]
+            S6[Logging]
+        end
+        
+        subgraph "REPOSITORIES"
+            R1[StudentRepository]
+            R2[Data Access]
+            R3[SQL Queries]
+            R4[Row Mapping]
+            R5[Connection Pool]
+            R6[Prepared Statements]
+        end
+        
+        subgraph "MODELS"
+            M1[Student Record]
+            M2[Data Transfer]
+            M3[Immutable]
+            M4[Type Safety]
+            M5[Serialization]
+            M6[JSON Mapping]
+        end
+    end
+    
+    C1 --> S1
+    S1 --> R1
+    R1 --> M1
+    
+    style C1 fill:#4caf50
+    style S1 fill:#2196f3
+    style R1 fill:#ff9800
+    style M1 fill:#f44336
 ```
 
 ### **Framework**: Spring Boot 3.3.0

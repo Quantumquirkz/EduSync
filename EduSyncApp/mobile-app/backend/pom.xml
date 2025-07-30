@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  EduSync - Backend Maven Configuration (pom.xml)
-  
-  Este archivo define la configuración del proyecto backend de EduSync,
-  un sistema de gestión estudiantil desarrollado con Spring Boot.
-  
-  Funcionalidades del backend:
-  - API REST para gestión de estudiantes
-  - Conexión a base de datos PostgreSQL (Supabase)
-  - Autenticación y autorización
-  - Manejo de transacciones de base de datos
-  
-  Tecnologías utilizadas:
-  - Spring Boot 3.3.0
-  - Java 17
-  - PostgreSQL (Supabase)
-  - Maven para gestión de dependencias
-  
+  EduSync - Backend Maven Configuration
+  Sistema de gestión estudiantil con Spring Boot
   @author EduSync Team
   @version 1.0.0
 -->
@@ -25,22 +10,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!-- Información básica del proyecto -->
+  <!-- Información del proyecto -->
   <groupId>com.example</groupId>
   <artifactId>gestion-estudiantes</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <!-- Propiedades del proyecto -->
+  <!-- Propiedades -->
   <properties>
-    <java.version>17</java.version>                    <!-- Versión de Java requerida -->
-    <spring-boot.version>3.3.0</spring-boot.version>   <!-- Versión de Spring Boot -->
+    <java.version>17</java.version>                    <!-- Java 17 -->
+    <spring-boot.version>3.3.0</spring-boot.version>   <!-- Spring Boot -->
   </properties>
 
-  <!-- Gestión de dependencias de Spring Boot -->
+  <!-- Gestión de dependencias Spring Boot -->
   <dependencyManagement>
     <dependencies>
-      <!-- Importar todas las dependencias de Spring Boot con versiones compatibles -->
+      <!-- Importar dependencias Spring Boot -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -51,28 +36,28 @@
     </dependencies>
   </dependencyManagement>
 
-  <!-- Dependencias del proyecto -->
+  <!-- Dependencias -->
   <dependencies>
-    <!-- Spring Web - Para crear APIs REST -->
+    <!-- Spring Web - APIs REST -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
 
-    <!-- JDBC - Para conexión a base de datos -->
+    <!-- JDBC - Conexión a base de datos -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
 
-    <!-- PostgreSQL driver - Supabase usa PostgreSQL como base de datos -->
+    <!-- PostgreSQL - Driver de base de datos -->
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
     </dependency>
 
-    <!-- Lombok - Reduce código boilerplate (opcional) -->
+    <!-- Lombok - Reducir código boilerplate -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -80,10 +65,10 @@
     </dependency>
   </dependencies>
 
-  <!-- Configuración de build -->
+  <!-- Build -->
   <build>
     <plugins>
-      <!-- Plugin de Spring Boot para crear JAR ejecutable -->
+      <!-- Plugin Spring Boot -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>

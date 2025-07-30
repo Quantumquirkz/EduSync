@@ -4,6 +4,36 @@
 
 Para que EduSync funcione correctamente, necesitas configurar las siguientes variables de entorno:
 
+### Flujo de Configuración
+
+```mermaid
+flowchart TD
+    A[Inicio Configuración] --> B{¿Método de Configuración?}
+    
+    B -->|Opción 1| C[Archivo .env]
+    B -->|Opción 2| D[Variables de Sistema]
+    B -->|Opción 3| E[config.ts Directo]
+    
+    C --> F[Crear .env en raíz]
+    F --> G[Agregar variables]
+    G --> H[Verificar configuración]
+    
+    D --> I[Exportar variables]
+    I --> H
+    
+    E --> J[Editar config.ts]
+    J --> H
+    
+    H --> K{¿Configuración correcta?}
+    K -->|Sí| L[✅ Aplicación lista]
+    K -->|No| M[❌ Revisar configuración]
+    M --> B
+    
+    style A fill:#e3f2fd
+    style L fill:#4caf50
+    style M fill:#f44336
+```
+
 ### 1. Supabase Configuration
 
 ```bash

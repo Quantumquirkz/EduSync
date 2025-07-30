@@ -2,31 +2,38 @@
 
 ## 🏗️ Organización General
 
-```
-EduSync/
-├── 📁 EduSyncApp/
-│   └── 📁 mobile-app/           # Aplicación móvil principal (React Native + Expo)
-│       ├── 📁 assets/           # Recursos estáticos (iconos, imágenes)
-│       ├── 📁 screens/          # Pantallas de la aplicación
-│       ├── 📁 hooks/            # Custom hooks de React
-│       ├── 📁 utils/            # Utilidades y funciones auxiliares
-│       ├── 📁 convex/           # Configuración de Convex (base de datos)
-│       ├── 📁 backend/          # Código del backend
-│       ├── 📄 App.tsx           # Componente principal de la aplicación
-│       ├── 📄 package.json      # Dependencias del proyecto
-│       ├── 📄 app.json          # Configuración de Expo
-│       ├── 📄 tsconfig.json     # Configuración de TypeScript
-│       └── 📄 SETUP.md          # Instrucciones de configuración
-├── 📁 docs/                     # Documentación específica
-│   ├── 📄 FRONTEND_README.md    # Documentación específica del frontend
-│   ├── 📄 BACKEND_README.md     # Documentación específica del backend
-│   ├── 📄 DATABASE_README.md    # Documentación de la base de datos
-│   ├── 📄 HOSTING_README.md     # Documentación de despliegue
-│   ├── 📄 PROJECT_STRUCTURE.md  # Documentación de estructura
-│   └── 📄 CHANGELOG.md          # Registro de cambios
-├── 📄 README.md                 # Documentación principal del proyecto
-├── 📄 cleanup.sh                # Script de limpieza del proyecto
-└── 📄 .gitignore                # Archivos ignorados por Git
+```mermaid
+graph TD
+    A[EduSync/] --> B[EduSyncApp/]
+    A --> C[docs/]
+    A --> D[README.md]
+    A --> E[cleanup.sh]
+    A --> F[.gitignore]
+    
+    B --> G[mobile-app/]
+    
+    G --> H[assets/]
+    G --> I[screens/]
+    G --> J[hooks/]
+    G --> K[utils/]
+    G --> L[convex/]
+    G --> M[backend/]
+    G --> N[App.tsx]
+    G --> O[package.json]
+    G --> P[app.json]
+    G --> Q[tsconfig.json]
+    G --> R[SETUP.md]
+    
+    C --> S[FRONTEND_README.md]
+    C --> T[BACKEND_README.md]
+    C --> U[DATABASE_README.md]
+    C --> V[HOSTING_README.md]
+    C --> W[PROJECT_STRUCTURE.md]
+    C --> X[CHANGELOG.md]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
 ```
 
 ## 🔄 Cambios Realizados
@@ -56,18 +63,25 @@ EduSync/
 - **Convex** para operaciones en tiempo real
 
 ### Estructura Interna
-```
-mobile-app/
-├── 📁 screens/          # Pantallas de la aplicación
-│   ├── 📁 auth/        # Autenticación y login
-│   ├── 📁 students/    # Gestión de estudiantes
-│   └── 📁 dashboard/   # Panel principal
-├── 📁 hooks/           # Custom hooks reutilizables
-├── 📁 utils/           # Funciones auxiliares
-├── 📁 convex/          # Configuración de Convex
-├── 📁 backend/         # Código del servidor
-├── 📁 assets/          # Recursos estáticos
-└── 📄 Config files     # Archivos de configuración
+
+```mermaid
+graph TD
+    A[mobile-app/] --> B[screens/]
+    A --> C[hooks/]
+    A --> D[utils/]
+    A --> E[convex/]
+    A --> F[backend/]
+    A --> G[assets/]
+    A --> H[Config files]
+    
+    B --> I[auth/]
+    B --> J[students/]
+    B --> K[dashboard/]
+    
+    style A fill:#f3e5f5
+    style B fill:#e8f5e8
+    style C fill:#fff3e0
+    style D fill:#fce4ec
 ```
 
 ## 🚀 Cómo Usar
